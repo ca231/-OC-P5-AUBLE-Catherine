@@ -33,11 +33,9 @@ public class FareCalculatorService {
         ZonedDateTime zonefin = instantfin.atZone(ZoneId.systemDefault());
         LocalDateTime localDateFin = zonefin.toLocalDateTime();
         
-        //long finStationnement = ticket.getOutTime();
-       
+
         long duree = Duration.between(localDateDeb,localDateFin).getSeconds();
         
-        System.out.println(duree);
         
         // Duree exprimée en secondes 
         duration = (double)(StrictMath.round( duree / 60));
@@ -45,12 +43,8 @@ public class FareCalculatorService {
         
         if ( duree > 3599 ) {
         	duration = StrictMath.round(duree / 3600);
-        	System.out.println(duration);
         }
         
-        
-        System.out.println(duration);
-
         
         switch (ticket.getParkingSpot().getParkingType()){
             case CAR: {
