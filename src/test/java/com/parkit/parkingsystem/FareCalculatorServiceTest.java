@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import com.parkit.parkingsystem.constants.Fare;
@@ -15,11 +17,12 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 
+@Tag("TestfonctionsCalculPrixTickets")
+@DisplayName("Test Fonctions Calcul Prix Tickets")
 public class FareCalculatorServiceTest {
 
 	private static FareCalculatorService fareCalculatorService;
 	private Ticket ticket;
-	private Ticket ticket2;
 
 	@BeforeAll
 	private static void setUp() {
@@ -60,6 +63,23 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
+	// @Tag("Calculwith UnknowType")
+	// @DisplayName("Calcul with Van Type")
+	public void calculateFareVanType() {
+		Date inTime = new Date();
+		inTime.setTime(System.currentTimeMillis() - (60 * 60 * 1000));
+		Date outTime = new Date();
+		ParkingSpot parkingSpot = new ParkingSpot(1, null, false);
+
+		ticket.setInTime(inTime);
+		ticket.setOutTime(outTime);
+		ticket.setParkingSpot(parkingSpot);
+		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
+	}
+
+	// Ajout d'un type supplémentaire non prévu dans le swith
+	@Tag("CalculwithUnknowType")
+	@DisplayName("Calcul with Unknow Type")
 	public void calculateFareUnkownType() {
 		Date inTime = new Date();
 		inTime.setTime(System.currentTimeMillis() - (60 * 60 * 1000));
@@ -150,4 +170,5 @@ public class FareCalculatorServiceTest {
 		// assertEquals((Math.round(1 * 95 * Fare.CAR_RATE_PER_HOUR) * 0.01),
 		// ticket.getPrice());
 	}
+
 }
