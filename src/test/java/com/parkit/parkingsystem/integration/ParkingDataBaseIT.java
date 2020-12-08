@@ -1,7 +1,7 @@
 package com.parkit.parkingsystem.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.AfterAll;
@@ -57,12 +57,12 @@ public class ParkingDataBaseIT {
 		// TODO: check that a ticket is actualy saved in DB and Parking table is updated
 		// with availability
 		assertThat(ticketDAO.getTicket("ABCDEF").getId()).isNotNull();
-		assertTrue(!ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable());
+		verify(!ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable());
 	}
 
 	@Test
 
-	public void testParkingLotExit() {
+	void testParkingLotExit() {
 		testParkingACar();
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processExitingVehicle();
@@ -72,7 +72,7 @@ public class ParkingDataBaseIT {
 		// TODO: check that the fare generated and out time are populated correctly in
 		// the database
 		assertThat(resultPrice).isNotNull();
-		assertThat(ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable());
+		verify(ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable());
 
 	}
 
