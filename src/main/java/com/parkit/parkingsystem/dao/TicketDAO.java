@@ -3,6 +3,7 @@ package com.parkit.parkingsystem.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,12 +21,23 @@ public class TicketDAO {
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-	public boolean saveTicket(Ticket ticket) {
+	public boolean saveTicket(Ticket ticket) throws SQLException {
+
 		Connection con = null;
+
 		try {
 			con = dataBaseConfig.getConnection();
-		} catch (Exception e) {
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		if (con == null)
+			throw new IllegalArgumentException("Connection impossible à la base");
+		;
+
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);) {
 
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
@@ -44,17 +56,24 @@ public class TicketDAO {
 		}
 	}
 
-	public Ticket getTicket(String vehicleRegNumber) {
+	public Ticket getTicket(String vehicleRegNumber) throws ClassNotFoundException, SQLException {
 		Connection con = null;
 		Ticket ticket = null;
-		try {
-			con = dataBaseConfig.getConnection();
-		} catch (Exception e) {
-		}
+
+		con = dataBaseConfig.getConnection();
+
+		if (con == null)
+			throw new IllegalArgumentException("Connection impossible à la base");
+		;
+
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET)) {
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 			ps.setString(1, vehicleRegNumber);
 			ResultSet rs = ps.executeQuery();
+			if (rs.wasNull()) {
+				logger.error("Error sur requete SQK", ps);
+				return ticket;
+			}
 			if (rs.next()) {
 				ticket = new Ticket();
 				ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)), false);
@@ -76,12 +95,12 @@ public class TicketDAO {
 		return ticket;
 	}
 
-	public boolean updateTicket(Ticket ticket) {
+	public boolean updateTicket(Ticket ticket) throws SQLException, ClassNotFoundException {
 		Connection con = null;
-		try {
-			con = dataBaseConfig.getConnection();
-		} catch (Exception e) {
-		}
+		con = dataBaseConfig.getConnection();
+		if (con == null)
+			throw new IllegalArgumentException("Connection impossible à la base");
+		;
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET)) {
 
 			ps.setDouble(1, ticket.getPrice());

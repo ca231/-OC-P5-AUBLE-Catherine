@@ -36,17 +36,17 @@ public class FareCalculatorService {
 
 		// Duree exprimée en secondes
 		// Duration en minutes avec une préxision au centième de minutes
-		duration = (StrictMath.round(duree / 60));
-		duration = duration / 60;
+		duration = (StrictMath.round(duree / 60f));
+		duration = duration / 60f;
 
 		if (duree > 3599) {
-			duration = StrictMath.round(duree / 3600);
+			duration = StrictMath.round(duree / 3600f);
 		}
 
 		if ((numeroVehicule != null) && (duration != 0)) {
 
 			if (ticket.getClass() != null) {
-				duration = duration * 0.95;
+				duration = duration * 0.95f;
 			}
 
 			// Réduction de 5% pour les clients récurrents c'est à dire ayant rentré plus

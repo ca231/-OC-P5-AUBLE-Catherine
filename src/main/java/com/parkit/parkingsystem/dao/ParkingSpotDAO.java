@@ -3,6 +3,7 @@ package com.parkit.parkingsystem.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,13 +19,15 @@ public class ParkingSpotDAO {
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-	public int getNextAvailableSlot(ParkingType parkingType) {
+	public int getNextAvailableSlot(ParkingType parkingType) throws Exception, SQLException {
 		Connection con = null;
 		int result = -1;
-		try {
-			con = dataBaseConfig.getConnection();
-		} catch (Exception ex) {
-		}
+
+		con = dataBaseConfig.getConnection();
+		if (con == null)
+			throw new IllegalArgumentException("Connection impossible à la base");
+		;
+
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT)) {
 			ps.setString(1, parkingType.toString());
 			ResultSet rs = ps.executeQuery();
@@ -45,10 +48,9 @@ public class ParkingSpotDAO {
 	public boolean updateParking(@NonNull ParkingSpot parkingSpot) {
 		// update the availability for that parking slot
 		Connection con = null;
-		try {
-			con = dataBaseConfig.getConnection();
-		} catch (Exception ex) {
-		}
+		if (con == null)
+			throw new IllegalArgumentException("Connection impossible à la base");
+		;
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_PARKING_SPOT)) {
 			ps.setBoolean(1, parkingSpot.isAvailable());
 			ps.setInt(2, parkingSpot.getId());
