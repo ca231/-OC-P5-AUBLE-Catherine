@@ -21,19 +21,12 @@ public class TicketDAO {
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-	public boolean saveTicket(Ticket ticket) throws SQLException {
+	public boolean saveTicket(Ticket ticket) throws SQLException, ClassNotFoundException {
 
 		Connection con = null;
 
-		try {
-			con = dataBaseConfig.getConnection();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		con = dataBaseConfig.getConnection();
+
 		if (con == null)
 			throw new IllegalArgumentException("Connection impossible à la base");
 		;

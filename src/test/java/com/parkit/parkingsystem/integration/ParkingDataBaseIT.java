@@ -2,6 +2,8 @@ package com.parkit.parkingsystem.integration;
 
 import static org.mockito.Mockito.when;
 
+import java.sql.SQLException;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,19 +51,19 @@ public class ParkingDataBaseIT {
 	}
 
 	@Test
-	public void testParkingACar() {
+	public void testParkingACar() throws ClassNotFoundException, SQLException {
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processIncomingVehicle();
 		// TODO: check that a ticket is actualy saved in DB and Parking table is updated
+		String numeroVehicule = "ABCDEF";
 		// with availability
-		// assertThat(ticketDAO.getTicket("ABCDEF").getId()).isNotNull();
-		// assertTrue(ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable());
-
+		// verify(ticketDAO.getTicket(numeroVehicule).getId());
+		// assertTrue(ticketDAO.getTicket(numeroVehicule).getParkingSpot().isAvailable());
 	}
 
 	@Test
 
-	void testParkingLotExit() {
+	void testParkingLotExit() throws ClassNotFoundException, SQLException {
 		testParkingACar();
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processExitingVehicle();

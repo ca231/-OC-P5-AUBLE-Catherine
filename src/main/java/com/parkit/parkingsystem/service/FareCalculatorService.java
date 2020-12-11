@@ -40,18 +40,13 @@ public class FareCalculatorService {
 		duration = duration / 60f;
 
 		if (duree > 3599) {
-			duration = StrictMath.round(duree / 3600f);
+			duration = Math.floor(duree / 3600f);
 		}
-
 		if ((numeroVehicule != null) && (duration != 0)) {
 
-			if (ticket.getClass() != null) {
-				duration = duration * 0.95f;
+			if (!ticket.getVehicleRegNumber().isEmpty()) {
+				duration = duration * 0.95;
 			}
-
-			// Réduction de 5% pour les clients récurrents c'est à dire ayant rentré plus
-			// d'une fois dans le parking
-
 		}
 		double price = 0;
 		switch (ticket.getParkingSpot().getParkingType()) {
@@ -70,5 +65,6 @@ public class FareCalculatorService {
 		}
 		price = Math.round(price * 100) * 0.01;
 		ticket.setPrice(price);
+
 	}
 }
