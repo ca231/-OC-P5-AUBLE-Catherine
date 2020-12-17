@@ -18,18 +18,19 @@ import com.parkit.parkingsystem.model.Ticket;
 public class TicketDAO {
 
 	private static final Logger logger = LogManager.getLogger("TicketDAO");
+	private static final String CONNEXIONIMPOSSIBLE = "Connection impossible à la base";
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-	public boolean saveTicket(Ticket ticket) throws SQLException, ClassNotFoundException {
+	public boolean saveTicket(Ticket ticket) throws SQLException {
 
 		Connection con = null;
 
 		con = dataBaseConfig.getConnection();
 
-		if (con == null)
-			throw new IllegalArgumentException("Connection impossible à la base");
-		;
+		if (con == null) {
+			throw new IllegalArgumentException(CONNEXIONIMPOSSIBLE);
+		}
 
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);) {
 
@@ -39,24 +40,27 @@ public class TicketDAO {
 			ps.setDouble(3, ticket.getPrice());
 			ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
 			ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
+			ps.execute();
 			return true;
+		} catch (NullPointerException ex) {
+			logger.error("Null Pointer Exception {0}", ex);
 		} catch (Exception ex) {
-			logger.error("Error fetching next available slot", ex);
+			logger.error("TicketDAO : Error fetching next available slot{0}", ex);
 			return false;
 		} finally {
 			dataBaseConfig.closeConnection(con);
-			// return false;
 		}
+		return false;
 	}
 
-	public Ticket getTicket(String vehicleRegNumber) throws ClassNotFoundException, SQLException {
+	public Ticket getTicket(String vehicleRegNumber) throws SQLException {
 		Connection con = null;
 		Ticket ticket = null;
 
 		con = dataBaseConfig.getConnection();
 
 		if (con == null)
-			throw new IllegalArgumentException("Connection impossible à la base");
+			throw new IllegalArgumentException(CONNEXIONIMPOSSIBLE);
 		;
 
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET)) {
@@ -64,7 +68,7 @@ public class TicketDAO {
 			ps.setString(1, vehicleRegNumber);
 			ResultSet rs = ps.executeQuery();
 			if (rs.wasNull()) {
-				logger.error("Error sur requete SQK", ps);
+				logger.info("Error sur requete SQL {}", ps);
 				return ticket;
 			}
 			if (rs.next()) {
@@ -79,21 +83,19 @@ public class TicketDAO {
 
 			}
 		} catch (Exception ex) {
-			logger.error("Error fetching next available slot", ex);
+			logger.info("Error fetching next available slot {0}", ex);
 		} finally {
-			// return ticket;
 			dataBaseConfig.closeConnection(con);
 		}
-		// return ticket;
 		return ticket;
 	}
 
-	public boolean updateTicket(Ticket ticket) throws SQLException, ClassNotFoundException {
+	public boolean updateTicket(Ticket ticket) throws SQLException {
 		Connection con = null;
 		con = dataBaseConfig.getConnection();
-		if (con == null)
-			throw new IllegalArgumentException("Connection impossible à la base");
-		;
+		if (con == null) {
+			throw new IllegalArgumentException(CONNEXIONIMPOSSIBLE);
+		}
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET)) {
 
 			ps.setDouble(1, ticket.getPrice());
@@ -102,11 +104,10 @@ public class TicketDAO {
 			ps.execute();
 			return true;
 		} catch (Exception ex) {
-			logger.error("Error saving ticket info", ex);
+			logger.error("Error saving ticket info {0}", ex);
 			return false;
 		} finally {
 			dataBaseConfig.closeConnection(con);
 		}
-		// return false;
 	}
 }

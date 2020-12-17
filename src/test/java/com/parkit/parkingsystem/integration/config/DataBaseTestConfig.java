@@ -16,9 +16,15 @@ public class DataBaseTestConfig extends DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseTestConfig");
 
 	@Override
-	public Connection getConnection() throws ClassNotFoundException, SQLException {
+	public Connection getConnection() throws SQLException {
 		logger.info("Create DB connection");
-		Class.forName("com.mysql.cj.jdbc.Driver");
+
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return DriverManager.getConnection(
 				"jdbc:mysql://localhost:3306/test?useUnicode=true" +
 						"&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&" +

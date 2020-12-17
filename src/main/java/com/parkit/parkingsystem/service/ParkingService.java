@@ -31,8 +31,14 @@ public class ParkingService {
 	public void processIncomingVehicle() {
 		try {
 			ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
+			String vehicleRegNumber = "";
 			if (parkingSpot != null && parkingSpot.getId() > 0) {
-				String vehicleRegNumber = getVehichleRegNumber();
+				try {
+					vehicleRegNumber = getVehichleRegNumber();
+				} catch (Exception e) {
+					logger.error("Vehicule non saisi", e);
+
+				}
 				parkingSpot.setAvailable(false);
 				parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as
 															// false

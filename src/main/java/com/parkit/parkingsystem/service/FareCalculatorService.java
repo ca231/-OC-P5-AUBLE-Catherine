@@ -37,26 +37,28 @@ public class FareCalculatorService {
 		// Duree exprimée en secondes
 		// Duration en minutes avec une préxision au centième de minutes
 		duration = (StrictMath.round(duree / 60f));
+
+		// Gratuit si inferieur à 30 Minutes
+		if (duration < 30) {
+			duration = 0;
+		}
+
 		duration = duration / 60f;
 
 		if (duree > 3599) {
 			duration = Math.floor(duree / 3600f);
 		}
-		if ((numeroVehicule != null) && (duration != 0)) {
 
-			if (!ticket.getVehicleRegNumber().isEmpty()) {
-				duration = duration * 0.95;
-			}
+		if ((numeroVehicule != null) && (duration != 0) && (!ticket.getVehicleRegNumber().isEmpty())) {
+			duration = duration * 0.95;
 		}
 		double price = 0;
 		switch (ticket.getParkingSpot().getParkingType()) {
 		case CAR: {
-			// ticket.setPrice(duration * Fare.CAR_RATE_PER_HOUR);
 			price = (duration * Fare.CAR_RATE_PER_HOUR);
 			break;
 		}
 		case BIKE: {
-			// ticket.setPrice(duration * Fare.BIKE_RATE_PER_HOUR);
 			price = (duration * Fare.BIKE_RATE_PER_HOUR);
 			break;
 		}
@@ -65,6 +67,6 @@ public class FareCalculatorService {
 		}
 		price = Math.round(price * 100) * 0.01;
 		ticket.setPrice(price);
-
 	}
+
 }

@@ -14,18 +14,17 @@ public class DataBaseConfig {
 
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 
-	public Connection getConnection() throws ClassNotFoundException, SQLException {
+	public Connection getConnection() throws SQLException {
 		logger.info("Create DB connection");
 		MysqlDataSource datasource = new MysqlDataSource();
 		datasource.setUser("root");
 		datasource.setPassword("rootroot");
+		datasource.setServerTimezone("UTC");
 		datasource.setServerName("localhost");
 		datasource.setPort(3306);
 		datasource.setDatabaseName("prod");
-
+		datasource.setURL("jdbc:mysql://");
 		return datasource.getConnection();
-		// return DriverManager.getConnection(
-		// "jdbc:mysql://localhost:3306/prod", "root", "rootroot");
 	}
 
 	public void closeConnection(Connection con) {

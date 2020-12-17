@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ public class ParkingServiceTest {
 	private static TicketDAO ticketDAO;
 
 	@BeforeEach
-	private void setUpPerTest() {
+	void setUpPerTest() {
 		try {
 			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 
@@ -57,7 +58,7 @@ public class ParkingServiceTest {
 	}
 
 	@Test
-	public void processExitingVehicleTest() {
+	void processExitingVehicleTest() throws ClassNotFoundException, SQLException {
 		parkingService.processExitingVehicle();
 		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
 	}

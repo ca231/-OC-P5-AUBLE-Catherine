@@ -16,7 +16,7 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 
 public class ParkingSpotDAO {
 	private static final Logger logger = LogManager.getLogger("ParkingSpotDAO");
-
+	private static final String CONNEXIONIMPOSSIBLE = "Connection impossible à la base";
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
 	public int getNextAvailableSlot(ParkingType parkingType) throws Exception, SQLException {
@@ -24,42 +24,41 @@ public class ParkingSpotDAO {
 		int result = -1;
 
 		con = dataBaseConfig.getConnection();
-		if (con == null)
-			throw new IllegalArgumentException("Connection impossible à la base");
-		;
+		if (con == null) {
+			throw new IllegalArgumentException(CONNEXIONIMPOSSIBLE);
+		}
 
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT)) {
 			ps.setString(1, parkingType.toString());
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				result = rs.getInt(1);
-				;
 			}
-			// dataBaseConfig.closeResultSet(rs);
-			// dataBaseConfig.closePreparedStatement(ps);
+			dataBaseConfig.closeResultSet(rs);
+			dataBaseConfig.closePreparedStatement(ps);
 		} catch (Exception ex) {
-			logger.error("Error fetching next available slot", ex);
+			logger.info("Error fetching next available slot {0}", ex);
 		} finally {
 			dataBaseConfig.closeConnection(con);
 		}
 		return result;
 	}
 
-	public boolean updateParking(@NonNull ParkingSpot parkingSpot) {
+	public boolean updateParking(@NonNull ParkingSpot parkingSpot) throws ClassNotFoundException, SQLException {
 		// update the availability for that parking slot
 		Connection con = null;
-		if (con == null)
-			throw new IllegalArgumentException("Connection impossible à la base");
-		;
+		con = dataBaseConfig.getConnection();
+		if (con == null) {
+			throw new IllegalArgumentException(CONNEXIONIMPOSSIBLE);
+		}
 		try (PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_PARKING_SPOT)) {
 			ps.setBoolean(1, parkingSpot.isAvailable());
 			ps.setInt(2, parkingSpot.getId());
-			int updateRowCount = ps.executeUpdate();
+			ps.execute();
 			dataBaseConfig.closePreparedStatement(ps);
-			// return (updateRowCount == 1);
 			return true;
 		} catch (Exception ex) {
-			logger.error("Error updating parking info", ex);
+			logger.info("Error updating parking info {0}", ex);
 			return false;
 		} finally {
 			dataBaseConfig.closeConnection(con);

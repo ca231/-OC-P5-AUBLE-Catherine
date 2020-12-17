@@ -2,8 +2,6 @@ package com.parkit.parkingsystem.integration;
 
 import static org.mockito.Mockito.when;
 
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,36 +49,27 @@ public class ParkingDataBaseIT {
 	}
 
 	@Test
-	public void testParkingACar() throws ClassNotFoundException, SQLException {
+	void testParkingACar() throws Exception {
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
 		parkingService.processIncomingVehicle();
+
 		// TODO: check that a ticket is actualy saved in DB and Parking table is updated
-		String numeroVehicule = "ABCDEF";
-		// with availability
-		// verify(ticketDAO.getTicket(numeroVehicule).getId());
-		// assertTrue(ticketDAO.getTicket(numeroVehicule).getParkingSpot().isAvailable());
+		// verify(ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable(),times(1));
+		// assertTrue(!ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable());
+		// assertTrue(!ticketDAO.getTicket("ABCDEF").getParkingSpot().isAvailable());
 	}
 
 	@Test
-
-	void testParkingLotExit() throws ClassNotFoundException, SQLException {
+	void testParkingLotExit() throws Exception {
 		testParkingACar();
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processExitingVehicle();
 
-		// parkingService.final double resultPrice =
-		// ticketDAO.getTicket("ABCDEF").getPrice();
-
 		// TODO: check that the fare generated and out time are populated correctly in
 		// the database
-		// assertThat(resultPrice).isNotNull();
-		// assertThat(ticketDAO.getTicket("ABCDEF").getOutTime()).isNotNull();
 
-	}
-
-	private void assertEqual(double price) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported yet.");
+		// assertNotNull(ticketDAO.getTicket("ABCDEF").getPrice());
 	}
 
 }
